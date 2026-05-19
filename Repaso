@@ -1,754 +1,232 @@
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+public class Libro {
 
-/*
-=====================================================
-CLASE PERSONA
-=====================================================
-*/
-class Persona {
+    private int codigo;
+    private String titulo;
+    private String autor;
+    private int anioPublicacion;
+    private double precio;
 
-    // atributos
-    private String nombre;
-    private int edad;
-    private int prioridad;
+    public Libro(int codigo, String titulo, String autor,
+                 int anioPublicacion, double precio) {
 
-    /*
-    constructor
-    sirve para crear objetos
-    */
-    public Persona(String nombre,
-                   int edad,
-                   int prioridad) {
-
-        this.nombre = nombre;
-        this.edad = edad;
-        this.prioridad = prioridad;
+        this.codigo = codigo;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.anioPublicacion = anioPublicacion;
+        this.precio = precio;
     }
 
-    /*
-    getter
-    obtiene nombre
-    */
-    public String getNombre() {
-        return nombre;
+    public int getCodigo() {
+        return codigo;
     }
 
-    /*
-    getter
-    obtiene edad
-    */
-    public int getEdad() {
-        return edad;
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
     }
 
-    /*
-    getter
-    obtiene prioridad
-    */
-    public int getPrioridad() {
-        return prioridad;
+    public String getTitulo() {
+        return titulo;
     }
 
-    /*
-    toString
-    convierte objeto a texto
-    */
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public int getAnioPublicacion() {
+        return anioPublicacion;
+    }
+
+    public void setAnioPublicacion(int anioPublicacion) {
+        this.anioPublicacion = anioPublicacion;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
     @Override
     public String toString() {
-
-        return "Nombre: " + nombre +
-                " Edad: " + edad +
-                " Prioridad: " + prioridad;
+        return codigo + " | " + titulo +
+                " | " + autor +
+                " | Año: " + anioPublicacion +
+                " | $" + precio;
     }
 }
+import java.util.ArrayList;
 
-/*
-=====================================================
-CLASE GESTOR
-AQUI ESTA TODO
-=====================================================
-*/
-class Gestor {
+public class GestionLibros {
 
-    /*
-    ARRAYLIST
-    guarda objetos persona
-    */
-    private ArrayList<Persona> personas;
+    private ArrayList<Libro> libros;
 
-    /*
-    PRIORITYQUEUE
-    cola con prioridad
-    */
-    private PriorityQueue<Persona> cola;
+    public GestionLibros() {
 
-    /*
-    constructor
-    */
-    public Gestor() {
-
-        /*
-        crear arraylist
-        */
-        personas = new ArrayList<>();
-
-        /*
-        comparator
-        ordena por prioridad
-        menor numero = mayor prioridad
-        */
-        cola = new PriorityQueue<>(
-                new Comparator<Persona>() {
-
-            @Override
-            public int compare(
-                    Persona o1,
-                    Persona o2) {
-
-                return o1.getPrioridad()
-                        - o2.getPrioridad();
-            }
-        });
+        libros = new ArrayList<>();
+        precargarLibros();
     }
 
-    /*
-    =====================================================
-    AGREGAR
-    =====================================================
-    */
-    public boolean agregar(Persona p) {
+    private void precargarLibros() {
 
-        /*
-        validar null
-        */
-        if(p == null){
+        libros.add(new Libro(101, "Clean Code", "Robert Martin", 2008, 45.50));
+        libros.add(new Libro(102, "Java Cómo Programar", "Deitel", 2014, 60.00));
+        libros.add(new Libro(103, "Algoritmos", "Cormen", 2009, 75.20));
+        libros.add(new Libro(104, "Thinking in Java", "Bruce Eckel", 2006, 55.80));
+        libros.add(new Libro(105, "Patrones de Diseño", "GoF", 1995, 70.00));
+    }
 
-            return false;
-        }
+    public ArrayList<Libro> getLibros() {
+        return libros;
+    }
 
-        /*
-        validar repetidos
-        */
-        for(Persona x : personas){
+    // =========================================
+    // AGREGAR LIBRO
+    // =========================================
+    public boolean agregarLibro(Libro libro) {
 
-            if(x.getNombre()
-                    .equals(p.getNombre())){
+        for (Libro l : libros) {
 
+            if (l.getCodigo() == libro.getCodigo()) {
                 return false;
             }
         }
 
-        /*
-        agregar al arraylist
-        */
-        personas.add(p);
-
-        /*
-        agregar a priorityqueue
-        */
-        cola.add(p);
-
+        libros.add(libro);
         return true;
     }
 
-    /*
-    =====================================================
-    LISTAR
-    =====================================================
-    */
-    public String listar() {
+    // =========================================
+    // BUSQUEDA SECUENCIAL
+    // =========================================
+    public Libro buscarPorTituloSecuencial(String titulo) {
 
-        /*
-        stringbuilder
-        concatena textos
-        */
-        StringBuilder sb =
-                new StringBuilder();
+        for (Libro l : libros) {
 
-        /*
-        recorrer arraylist
-        */
-        for(Persona p : personas){
-
-            sb.append(p.toString())
-                    .append("\n");
-        }
-
-        return sb.toString();
-    }
-
-    /*
-    =====================================================
-    ELIMINAR
-    =====================================================
-    */
-    public boolean eliminar(String nombre) {
-
-        /*
-        recorrer arraylist
-        */
-        for(Persona p : personas){
-
-            /*
-            comparar nombre
-            */
-            if(p.getNombre()
-                    .equals(nombre)){
-
-                /*
-                eliminar del arraylist
-                */
-                personas.remove(p);
-
-                /*
-                eliminar de la cola
-                */
-                cola.remove(p);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /*
-    =====================================================
-    BUSQUEDA NORMAL
-    =====================================================
-    */
-    public Persona buscar(String nombre){
-
-        /*
-        recorrer arraylist
-        */
-        for(Persona p : personas){
-
-            /*
-            comparar nombre
-            */
-            if(p.getNombre()
-                    .equals(nombre)){
-
-                return p;
+            if (l.getTitulo().equalsIgnoreCase(titulo)) {
+                return l;
             }
         }
 
         return null;
     }
 
-    /*
-    =====================================================
-    BUSQUEDA RECURSIVA
-    =====================================================
-    */
-    public boolean buscarRecursivo(
-            ArrayList<Persona> lista,
-            String nombre,
-            int indice){
+    // =========================================
+    // ORDENAMIENTO BURBUJA
+    // =========================================
+    public ArrayList<Libro> ordenarPorPrecioDescendente() {
 
-        /*
-        caso base
-        */
-        if(indice >= lista.size()){
+        for (int i = 0; i < libros.size() - 1; i++) {
 
-            return false;
+            for (int j = 0; j < libros.size() - 1 - i; j++) {
+
+                if (libros.get(j).getPrecio() <
+                        libros.get(j + 1).getPrecio()) {
+
+                    Libro aux = libros.get(j);
+                    libros.set(j, libros.get(j + 1));
+                    libros.set(j + 1, aux);
+                }
+            }
         }
 
-        /*
-        comparar
-        */
-        if(lista.get(indice)
-                .getNombre()
-                .equals(nombre)){
-
-            return true;
-        }
-
-        /*
-        llamada recursiva
-        */
-        return buscarRecursivo(
-                lista,
-                nombre,
-                indice+1
-        );
+        return libros;
     }
 
-    /*
-    =====================================================
-    BUBBLE SORT
-    ordena por edad
-    =====================================================
-    */
-    public void burbuja(){
+    // =========================================
+    // ORDENAR POR CODIGO
+    // =========================================
+    private void ordenarPorCodigo() {
 
-        Persona aux;
+        for (int i = 0; i < libros.size() - 1; i++) {
 
-        int n = personas.size();
+            for (int j = 0; j < libros.size() - 1 - i; j++) {
 
-        /*
-        vueltas
-        */
-        for(int i=0; i<n-1; i++){
+                if (libros.get(j).getCodigo() >
+                        libros.get(j + 1).getCodigo()) {
 
-            /*
-            comparar vecinos
-            */
-            for(int j=0; j<n-1-i; j++){
-
-                /*
-                comparar edades
-                */
-                if(personas.get(j).getEdad()
-                        >
-                   personas.get(j+1).getEdad()){
-
-                    /*
-                    intercambio
-                    */
-                    aux = personas.get(j);
-
-                    personas.set(
-                            j,
-                            personas.get(j+1)
-                    );
-
-                    personas.set(
-                            j+1,
-                            aux
-                    );
+                    Libro aux = libros.get(j);
+                    libros.set(j, libros.get(j + 1));
+                    libros.set(j + 1, aux);
                 }
             }
         }
     }
 
-    /*
-    =====================================================
-    INSERTION SORT
-    =====================================================
-    */
-    public void insercion(){
+    // =========================================
+    // BUSQUEDA BINARIA
+    // =========================================
+    public Libro buscarPorCodigoBinario(int codigo) {
 
-        Persona aux;
+        ordenarPorCodigo();
 
-        int j;
+        int inicio = 0;
+        int fin = libros.size() - 1;
 
-        /*
-        empieza en 1
-        */
-        for(int p=1;
-            p<personas.size();
-            p++){
+        while (inicio <= fin) {
 
-            /*
-            guardar actual
-            */
-            aux = personas.get(p);
+            int medio = (inicio + fin) / 2;
 
-            /*
-            izquierda
-            */
-            j = p-1;
-
-            /*
-            mover elementos
-            */
-            while(j>=0 &&
-                    aux.getEdad()
-                            <
-                    personas.get(j)
-                            .getEdad()){
-
-                personas.set(
-                        j+1,
-                        personas.get(j)
-                );
-
-                j--;
+            if (libros.get(medio).getCodigo() == codigo) {
+                return libros.get(medio);
             }
 
-            /*
-            insertar
-            */
-            personas.set(j+1,aux);
-        }
-    }
-
-    /*
-    =====================================================
-    BUSQUEDA BINARIA
-    =====================================================
-    */
-    public int busquedaBinaria(int edad){
-
-        int inf = 0;
-
-        int sup = personas.size()-1;
-
-        while(inf <= sup){
-
-            /*
-            centro
-            */
-            int centro =
-                    (inf+sup)/2;
-
-            /*
-            comparar
-            */
-            if(edad ==
-                    personas.get(centro)
-                            .getEdad()){
-
-                return centro;
-            }
-
-            /*
-            izquierda
-            */
-            else if(edad <
-                    personas.get(centro)
-                            .getEdad()){
-
-                sup = centro-1;
-            }
-
-            /*
-            derecha
-            */
-            else{
-
-                inf = centro+1;
+            if (codigo < libros.get(medio).getCodigo()) {
+                fin = medio - 1;
+            } else {
+                inicio = medio + 1;
             }
         }
 
-        return -1;
+        return null;
     }
 
-    /*
-    =====================================================
-    PRIORITYQUEUE
-    VER PRIMERO
-    =====================================================
-    */
-    public Persona verPrimero(){
+    // =========================================
+    // RECURSIVIDAD CONTAR
+    // =========================================
+    public int contarRecursivo(int indice) {
 
-        /*
-        peek
-        consulta
-        */
-        return cola.peek();
+        if (indice == libros.size()) {
+            return 0;
+        }
+
+        return 1 + contarRecursivo(indice + 1);
     }
 
-    /*
-    =====================================================
-    PRIORITYQUEUE
-    ELIMINAR PRIMERO
-    =====================================================
-    */
-    public Persona atender(){
+    // =========================================
+    // SUMA RECURSIVA
+    // =========================================
+    public double sumaPreciosRecursiva(int indice) {
 
-        /*
-        poll
-        elimina primero
-        */
-        return cola.poll();
+        if (indice == libros.size()) {
+            return 0;
+        }
+
+        return libros.get(indice).getPrecio()
+                + sumaPreciosRecursiva(indice + 1);
     }
 
-    /*
-    =====================================================
-    CONTAR
-    =====================================================
-    */
-    public int contar(){
+    // =========================================
+    // PROMEDIO RECURSIVO
+    // =========================================
+    public double precioPromedioRecursivo() {
 
-        return personas.size();
-    }
+        int total = contarRecursivo(0);
 
-    /*
-    =====================================================
-    CLONAR
-    =====================================================
-    */
-    public ArrayList<Persona> clonar(){
+        if (total == 0) {
+            return 0;
+        }
 
-        return (ArrayList<Persona>)
-                personas.clone();
+        return sumaPreciosRecursiva(0) / total;
     }
 }
 
-/*
-=====================================================
-INTERFAZ SWING
-=====================================================
-*/
-public class Main extends JFrame {
-
-    /*
-    componentes swing
-    */
-    private JTextField txtNombre;
-
-    private JTextField txtEdad;
-
-    private JTextField txtPrioridad;
-
-    private JTextArea area;
-
-    private JButton btnAgregar;
-
-    private JButton btnListar;
-
-    private JButton btnOrdenar;
-
-    private JButton btnBuscar;
-
-    /*
-    objeto gestor
-    */
-    Gestor g = new Gestor();
-
-    /*
-    constructor ventana
-    */
-    public Main(){
-
-        /*
-        tamaño ventana
-        */
-        setSize(500,500);
-
-        /*
-        cerrar programa
-        */
-        setDefaultCloseOperation(
-                JFrame.EXIT_ON_CLOSE
-        );
-
-        /*
-        layout
-        */
-        setLayout(null);
-
-        /*
-        crear componentes
-        */
-        txtNombre =
-                new JTextField();
-
-        txtEdad =
-                new JTextField();
-
-        txtPrioridad =
-                new JTextField();
-
-        area =
-                new JTextArea();
-
-        btnAgregar =
-                new JButton("AGREGAR");
-
-        btnListar =
-                new JButton("LISTAR");
-
-        btnOrdenar =
-                new JButton("BURBUJA");
-
-        btnBuscar =
-                new JButton("BUSCAR");
-
-        /*
-        posiciones
-        */
-        txtNombre.setBounds(20,20,100,30);
-
-        txtEdad.setBounds(20,60,100,30);
-
-        txtPrioridad.setBounds(20,100,100,30);
-
-        btnAgregar.setBounds(150,20,120,30);
-
-        btnListar.setBounds(150,60,120,30);
-
-        btnOrdenar.setBounds(150,100,120,30);
-
-        btnBuscar.setBounds(150,140,120,30);
-
-        area.setBounds(20,200,400,200);
-
-        /*
-        agregar componentes
-        */
-        add(txtNombre);
-
-        add(txtEdad);
-
-        add(txtPrioridad);
-
-        add(btnAgregar);
-
-        add(btnListar);
-
-        add(btnOrdenar);
-
-        add(btnBuscar);
-
-        add(area);
-
-        /*
-        =====================================================
-        BOTON AGREGAR
-        =====================================================
-        */
-        btnAgregar.addActionListener(
-                new ActionListener() {
-
-            @Override
-            public void actionPerformed(
-                    ActionEvent e) {
-
-                /*
-                obtener datos
-                */
-                String nombre =
-                        txtNombre.getText();
-
-                int edad =
-                        Integer.parseInt(
-                                txtEdad.getText()
-                        );
-
-                int prioridad =
-                        Integer.parseInt(
-                                txtPrioridad.getText()
-                        );
-
-                /*
-                crear objeto
-                */
-                Persona p =
-                        new Persona(
-                                nombre,
-                                edad,
-                                prioridad
-                        );
-
-                /*
-                agregar
-                */
-                if(g.agregar(p)){
-
-                    JOptionPane
-                            .showMessageDialog(
-                            null,
-                            "AGREGADO"
-                    );
-
-                }else{
-
-                    JOptionPane
-                            .showMessageDialog(
-                            null,
-                            "ERROR"
-                    );
-                }
-            }
-        });
-
-        /*
-        =====================================================
-        BOTON LISTAR
-        =====================================================
-        */
-        btnListar.addActionListener(
-                new ActionListener() {
-
-            @Override
-            public void actionPerformed(
-                    ActionEvent e) {
-
-                area.setText(
-                        g.listar()
-                );
-            }
-        });
-
-        /*
-        =====================================================
-        BOTON BURBUJA
-        =====================================================
-        */
-        btnOrdenar.addActionListener(
-                new ActionListener() {
-
-            @Override
-            public void actionPerformed(
-                    ActionEvent e) {
-
-                /*
-                ordenar
-                */
-                g.burbuja();
-
-                /*
-                mostrar
-                */
-                area.setText(
-                        g.listar()
-                );
-            }
-        });
-
-        /*
-        =====================================================
-        BOTON BUSCAR
-        =====================================================
-        */
-        btnBuscar.addActionListener(
-                new ActionListener() {
-
-            @Override
-            public void actionPerformed(
-                    ActionEvent e) {
-
-                /*
-                buscar recursivo
-                */
-                boolean existe =
-                        g.buscarRecursivo(
-                                g.clonar(),
-                                txtNombre.getText(),
-                                0
-                        );
-
-                /*
-                mostrar
-                */
-                JOptionPane
-                        .showMessageDialog(
-                        null,
-                        existe
-                );
-            }
-        });
-    }
-
-    /*
-    =====================================================
-    MAIN
-    =====================================================
-    */
-    public static void main(String[] args) {
-
-        /*
-        crear ventana
-        */
-        new Main().setVisible(true);
-    }
-}
