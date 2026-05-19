@@ -1,0 +1,754 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+/*
+=====================================================
+CLASE PERSONA
+=====================================================
+*/
+class Persona {
+
+    // atributos
+    private String nombre;
+    private int edad;
+    private int prioridad;
+
+    /*
+    constructor
+    sirve para crear objetos
+    */
+    public Persona(String nombre,
+                   int edad,
+                   int prioridad) {
+
+        this.nombre = nombre;
+        this.edad = edad;
+        this.prioridad = prioridad;
+    }
+
+    /*
+    getter
+    obtiene nombre
+    */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /*
+    getter
+    obtiene edad
+    */
+    public int getEdad() {
+        return edad;
+    }
+
+    /*
+    getter
+    obtiene prioridad
+    */
+    public int getPrioridad() {
+        return prioridad;
+    }
+
+    /*
+    toString
+    convierte objeto a texto
+    */
+    @Override
+    public String toString() {
+
+        return "Nombre: " + nombre +
+                " Edad: " + edad +
+                " Prioridad: " + prioridad;
+    }
+}
+
+/*
+=====================================================
+CLASE GESTOR
+AQUI ESTA TODO
+=====================================================
+*/
+class Gestor {
+
+    /*
+    ARRAYLIST
+    guarda objetos persona
+    */
+    private ArrayList<Persona> personas;
+
+    /*
+    PRIORITYQUEUE
+    cola con prioridad
+    */
+    private PriorityQueue<Persona> cola;
+
+    /*
+    constructor
+    */
+    public Gestor() {
+
+        /*
+        crear arraylist
+        */
+        personas = new ArrayList<>();
+
+        /*
+        comparator
+        ordena por prioridad
+        menor numero = mayor prioridad
+        */
+        cola = new PriorityQueue<>(
+                new Comparator<Persona>() {
+
+            @Override
+            public int compare(
+                    Persona o1,
+                    Persona o2) {
+
+                return o1.getPrioridad()
+                        - o2.getPrioridad();
+            }
+        });
+    }
+
+    /*
+    =====================================================
+    AGREGAR
+    =====================================================
+    */
+    public boolean agregar(Persona p) {
+
+        /*
+        validar null
+        */
+        if(p == null){
+
+            return false;
+        }
+
+        /*
+        validar repetidos
+        */
+        for(Persona x : personas){
+
+            if(x.getNombre()
+                    .equals(p.getNombre())){
+
+                return false;
+            }
+        }
+
+        /*
+        agregar al arraylist
+        */
+        personas.add(p);
+
+        /*
+        agregar a priorityqueue
+        */
+        cola.add(p);
+
+        return true;
+    }
+
+    /*
+    =====================================================
+    LISTAR
+    =====================================================
+    */
+    public String listar() {
+
+        /*
+        stringbuilder
+        concatena textos
+        */
+        StringBuilder sb =
+                new StringBuilder();
+
+        /*
+        recorrer arraylist
+        */
+        for(Persona p : personas){
+
+            sb.append(p.toString())
+                    .append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    /*
+    =====================================================
+    ELIMINAR
+    =====================================================
+    */
+    public boolean eliminar(String nombre) {
+
+        /*
+        recorrer arraylist
+        */
+        for(Persona p : personas){
+
+            /*
+            comparar nombre
+            */
+            if(p.getNombre()
+                    .equals(nombre)){
+
+                /*
+                eliminar del arraylist
+                */
+                personas.remove(p);
+
+                /*
+                eliminar de la cola
+                */
+                cola.remove(p);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+    =====================================================
+    BUSQUEDA NORMAL
+    =====================================================
+    */
+    public Persona buscar(String nombre){
+
+        /*
+        recorrer arraylist
+        */
+        for(Persona p : personas){
+
+            /*
+            comparar nombre
+            */
+            if(p.getNombre()
+                    .equals(nombre)){
+
+                return p;
+            }
+        }
+
+        return null;
+    }
+
+    /*
+    =====================================================
+    BUSQUEDA RECURSIVA
+    =====================================================
+    */
+    public boolean buscarRecursivo(
+            ArrayList<Persona> lista,
+            String nombre,
+            int indice){
+
+        /*
+        caso base
+        */
+        if(indice >= lista.size()){
+
+            return false;
+        }
+
+        /*
+        comparar
+        */
+        if(lista.get(indice)
+                .getNombre()
+                .equals(nombre)){
+
+            return true;
+        }
+
+        /*
+        llamada recursiva
+        */
+        return buscarRecursivo(
+                lista,
+                nombre,
+                indice+1
+        );
+    }
+
+    /*
+    =====================================================
+    BUBBLE SORT
+    ordena por edad
+    =====================================================
+    */
+    public void burbuja(){
+
+        Persona aux;
+
+        int n = personas.size();
+
+        /*
+        vueltas
+        */
+        for(int i=0; i<n-1; i++){
+
+            /*
+            comparar vecinos
+            */
+            for(int j=0; j<n-1-i; j++){
+
+                /*
+                comparar edades
+                */
+                if(personas.get(j).getEdad()
+                        >
+                   personas.get(j+1).getEdad()){
+
+                    /*
+                    intercambio
+                    */
+                    aux = personas.get(j);
+
+                    personas.set(
+                            j,
+                            personas.get(j+1)
+                    );
+
+                    personas.set(
+                            j+1,
+                            aux
+                    );
+                }
+            }
+        }
+    }
+
+    /*
+    =====================================================
+    INSERTION SORT
+    =====================================================
+    */
+    public void insercion(){
+
+        Persona aux;
+
+        int j;
+
+        /*
+        empieza en 1
+        */
+        for(int p=1;
+            p<personas.size();
+            p++){
+
+            /*
+            guardar actual
+            */
+            aux = personas.get(p);
+
+            /*
+            izquierda
+            */
+            j = p-1;
+
+            /*
+            mover elementos
+            */
+            while(j>=0 &&
+                    aux.getEdad()
+                            <
+                    personas.get(j)
+                            .getEdad()){
+
+                personas.set(
+                        j+1,
+                        personas.get(j)
+                );
+
+                j--;
+            }
+
+            /*
+            insertar
+            */
+            personas.set(j+1,aux);
+        }
+    }
+
+    /*
+    =====================================================
+    BUSQUEDA BINARIA
+    =====================================================
+    */
+    public int busquedaBinaria(int edad){
+
+        int inf = 0;
+
+        int sup = personas.size()-1;
+
+        while(inf <= sup){
+
+            /*
+            centro
+            */
+            int centro =
+                    (inf+sup)/2;
+
+            /*
+            comparar
+            */
+            if(edad ==
+                    personas.get(centro)
+                            .getEdad()){
+
+                return centro;
+            }
+
+            /*
+            izquierda
+            */
+            else if(edad <
+                    personas.get(centro)
+                            .getEdad()){
+
+                sup = centro-1;
+            }
+
+            /*
+            derecha
+            */
+            else{
+
+                inf = centro+1;
+            }
+        }
+
+        return -1;
+    }
+
+    /*
+    =====================================================
+    PRIORITYQUEUE
+    VER PRIMERO
+    =====================================================
+    */
+    public Persona verPrimero(){
+
+        /*
+        peek
+        consulta
+        */
+        return cola.peek();
+    }
+
+    /*
+    =====================================================
+    PRIORITYQUEUE
+    ELIMINAR PRIMERO
+    =====================================================
+    */
+    public Persona atender(){
+
+        /*
+        poll
+        elimina primero
+        */
+        return cola.poll();
+    }
+
+    /*
+    =====================================================
+    CONTAR
+    =====================================================
+    */
+    public int contar(){
+
+        return personas.size();
+    }
+
+    /*
+    =====================================================
+    CLONAR
+    =====================================================
+    */
+    public ArrayList<Persona> clonar(){
+
+        return (ArrayList<Persona>)
+                personas.clone();
+    }
+}
+
+/*
+=====================================================
+INTERFAZ SWING
+=====================================================
+*/
+public class Main extends JFrame {
+
+    /*
+    componentes swing
+    */
+    private JTextField txtNombre;
+
+    private JTextField txtEdad;
+
+    private JTextField txtPrioridad;
+
+    private JTextArea area;
+
+    private JButton btnAgregar;
+
+    private JButton btnListar;
+
+    private JButton btnOrdenar;
+
+    private JButton btnBuscar;
+
+    /*
+    objeto gestor
+    */
+    Gestor g = new Gestor();
+
+    /*
+    constructor ventana
+    */
+    public Main(){
+
+        /*
+        tamaño ventana
+        */
+        setSize(500,500);
+
+        /*
+        cerrar programa
+        */
+        setDefaultCloseOperation(
+                JFrame.EXIT_ON_CLOSE
+        );
+
+        /*
+        layout
+        */
+        setLayout(null);
+
+        /*
+        crear componentes
+        */
+        txtNombre =
+                new JTextField();
+
+        txtEdad =
+                new JTextField();
+
+        txtPrioridad =
+                new JTextField();
+
+        area =
+                new JTextArea();
+
+        btnAgregar =
+                new JButton("AGREGAR");
+
+        btnListar =
+                new JButton("LISTAR");
+
+        btnOrdenar =
+                new JButton("BURBUJA");
+
+        btnBuscar =
+                new JButton("BUSCAR");
+
+        /*
+        posiciones
+        */
+        txtNombre.setBounds(20,20,100,30);
+
+        txtEdad.setBounds(20,60,100,30);
+
+        txtPrioridad.setBounds(20,100,100,30);
+
+        btnAgregar.setBounds(150,20,120,30);
+
+        btnListar.setBounds(150,60,120,30);
+
+        btnOrdenar.setBounds(150,100,120,30);
+
+        btnBuscar.setBounds(150,140,120,30);
+
+        area.setBounds(20,200,400,200);
+
+        /*
+        agregar componentes
+        */
+        add(txtNombre);
+
+        add(txtEdad);
+
+        add(txtPrioridad);
+
+        add(btnAgregar);
+
+        add(btnListar);
+
+        add(btnOrdenar);
+
+        add(btnBuscar);
+
+        add(area);
+
+        /*
+        =====================================================
+        BOTON AGREGAR
+        =====================================================
+        */
+        btnAgregar.addActionListener(
+                new ActionListener() {
+
+            @Override
+            public void actionPerformed(
+                    ActionEvent e) {
+
+                /*
+                obtener datos
+                */
+                String nombre =
+                        txtNombre.getText();
+
+                int edad =
+                        Integer.parseInt(
+                                txtEdad.getText()
+                        );
+
+                int prioridad =
+                        Integer.parseInt(
+                                txtPrioridad.getText()
+                        );
+
+                /*
+                crear objeto
+                */
+                Persona p =
+                        new Persona(
+                                nombre,
+                                edad,
+                                prioridad
+                        );
+
+                /*
+                agregar
+                */
+                if(g.agregar(p)){
+
+                    JOptionPane
+                            .showMessageDialog(
+                            null,
+                            "AGREGADO"
+                    );
+
+                }else{
+
+                    JOptionPane
+                            .showMessageDialog(
+                            null,
+                            "ERROR"
+                    );
+                }
+            }
+        });
+
+        /*
+        =====================================================
+        BOTON LISTAR
+        =====================================================
+        */
+        btnListar.addActionListener(
+                new ActionListener() {
+
+            @Override
+            public void actionPerformed(
+                    ActionEvent e) {
+
+                area.setText(
+                        g.listar()
+                );
+            }
+        });
+
+        /*
+        =====================================================
+        BOTON BURBUJA
+        =====================================================
+        */
+        btnOrdenar.addActionListener(
+                new ActionListener() {
+
+            @Override
+            public void actionPerformed(
+                    ActionEvent e) {
+
+                /*
+                ordenar
+                */
+                g.burbuja();
+
+                /*
+                mostrar
+                */
+                area.setText(
+                        g.listar()
+                );
+            }
+        });
+
+        /*
+        =====================================================
+        BOTON BUSCAR
+        =====================================================
+        */
+        btnBuscar.addActionListener(
+                new ActionListener() {
+
+            @Override
+            public void actionPerformed(
+                    ActionEvent e) {
+
+                /*
+                buscar recursivo
+                */
+                boolean existe =
+                        g.buscarRecursivo(
+                                g.clonar(),
+                                txtNombre.getText(),
+                                0
+                        );
+
+                /*
+                mostrar
+                */
+                JOptionPane
+                        .showMessageDialog(
+                        null,
+                        existe
+                );
+            }
+        });
+    }
+
+    /*
+    =====================================================
+    MAIN
+    =====================================================
+    */
+    public static void main(String[] args) {
+
+        /*
+        crear ventana
+        */
+        new Main().setVisible(true);
+    }
+}
